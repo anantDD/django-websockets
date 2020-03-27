@@ -21,6 +21,33 @@
 
 <script>
 // websocket scripts
+console.log(window.location);
+let loc = window.location;
+let wsStart = 'ws://';
+if (loc.protocol === 'https:'){
+    wsStart = 'wss://'
+}
+let endpoint = wsStart + loc.host + loc.pathname;
+let socket = new WebSocket(endpoint);
+
+{#socket.onmessage;#}
+{#socket.onopen;#}
+{#socket.onerror;#}
+{#socket.onclose;#}
+
+socket.onmessage = e => {
+    console.log('message', e)
+};
+socket.onopen = e => {
+    console.log('socket open', e)
+};
+socket.onerror = e => {
+    console.log('socket error', e)
+};
+socket.onclose = e => {
+    console.log('socket closing', e)
+}
+
 
 </script>
 {% endblock %}
