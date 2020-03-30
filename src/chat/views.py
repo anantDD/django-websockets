@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic.edit import FormMixin
@@ -14,6 +14,9 @@ class InboxView(LoginRequiredMixin, ListView):
     template_name = 'chat/inbox.html'
     def get_queryset(self):
         return Thread.objects.by_user(self.request.user)
+
+def test_view(request, name, slugname, num):
+    return HttpResponse(f"hello {name} {slugname} {num}")
 
 
 class ThreadView(LoginRequiredMixin, FormMixin, DetailView):
