@@ -21,8 +21,10 @@
 
 <script>
 // websocket scripts
-console.log(window.location);
+{#console.log(window.location);#}
 let loc = window.location;
+let formData = document.getElementById('form');
+let msgInput = document.getElementById('id_message');
 let wsStart = 'ws://';
 if (loc.protocol === 'https:'){
     wsStart = 'wss://'
@@ -38,8 +40,18 @@ let socket = new WebSocket(endpoint);
 socket.onmessage = e => {
     console.log('message', e)
 };
-socket.onopen = e => {
+socket.onopen = function(e) {
     console.log('socket open', e)
+    formData.onsubmit = function (event)  {
+        event.preventDefault();
+        let msgText = msgInput.value;
+        let finalData = {
+            'message': msgText
+        };
+        console.log('asdf', event);
+        socket.send(JSON.stringify(finalData));
+        formData.reset()
+    }
 };
 socket.onerror = e => {
     console.log('socket error', e)
