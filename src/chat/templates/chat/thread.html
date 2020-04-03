@@ -2,6 +2,7 @@
 
 {% block content %}
 <h3>Thread for {% if user != object.first %}{{ object.first }}{% else %}{{ object.second }}{% endif %}</h3>
+<input id="username" type="hidden" value="{{ user.username }}"/>
 <ul id='chat-items'>
 {% for chat in object.chatmessage_set.all %}
 
@@ -25,30 +26,36 @@
 let loc = window.location;
 let formData = document.getElementById('form');
 let msgInput = document.getElementById('id_message');
+let list = document.getElementById('chat-items');
 let wsStart = 'ws://';
 if (loc.protocol === 'https:'){
     wsStart = 'wss://'
 }
 let endpoint = wsStart + loc.host + loc.pathname;
 let socket = new WebSocket(endpoint);
-
+let me = document.getElementById('username').value;
 {#socket.onmessage;#}
 {#socket.onopen;#}
 {#socket.onerror;#}
 {#socket.onclose;#}
 
 socket.onmessage = e => {
-    console.log('message', e)
+    console.log('message', e);
+    let msgData = JSON.parse(e.data);
+    let entry = document.createElement('li');
+    entry.appendChild(document.createTextNode(msgData.message + ' via ' + msgData.username));
+    list.appendChild(entry);
 };
 socket.onopen = function(e) {
-    console.log('socket open', e)
+    console.log('socket open', e);
     formData.onsubmit = function (event)  {
         event.preventDefault();
         let msgText = msgInput.value;
+
+        list.append(document.createElement('li').appendChild(document.createTextNode(msgText + '1 via ' + me)));
         let finalData = {
             'message': msgText
         };
-        console.log('asdf', event);
         socket.send(JSON.stringify(finalData));
         formData.reset()
     }
