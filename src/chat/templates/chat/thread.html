@@ -52,7 +52,9 @@ socket.onopen = function(e) {
         event.preventDefault();
         let msgText = msgInput.value;
 
-        list.append(document.createElement('li').appendChild(document.createTextNode(msgText + '1 via ' + me)));
+        let newentry = document.createElement('li');
+        newentry.appendChild(document.createTextNode(msgText + '1 via ' + me));
+        list.append(newentry);
         let finalData = {
             'message': msgText
         };
