@@ -15,6 +15,7 @@ class ChatConsumer(AsyncConsumer):
         print(other_user, me)
         thread_obj = await self.get_thread(me, other_user)
         print(me, thread_obj.id)
+        self.thread_obj = thread_obj
         chat_room = f"thread_{thread_obj.id}"
         self.chat_room = chat_room
         await self.channel_layer.group_add(
@@ -47,7 +48,7 @@ class ChatConsumer(AsyncConsumer):
                 'message': msg,
                 'username': username
             }
-
+            await self.create_chat_message(user, msg)
             # Broadcasts the message event to be sent
             # which triggers chat_babloo_xyz function
             # for all the members of the group which here is the chat_room.
@@ -73,3 +74,7 @@ class ChatConsumer(AsyncConsumer):
     @database_sync_to_async
     def get_thread(self, user, other_username):
         return Thread.objects.get_or_new(user, other_username)[0]
+
+    @database_sync_to_async
+    def create_chat_message(self, me, msg):
+        return ChatMessage.objects.create(user=me, thread=self.thread_obj, message=msg)
